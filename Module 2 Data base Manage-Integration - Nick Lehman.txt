@@ -1,0 +1,61 @@
+//Hi, I Nick, struggled a little with this, so sorry if it sounds bad or is hard to understand.  I tried hard, though!
+Start
+// first, we need the variables needed for the data
+Input list Employee names
+Input list Employee IDs
+Input Entered ID 
+Input list Overtime hours
+Input list Normal time hours
+Create List item
+Create Input
+
+//Now we can get started
+//If we are editing the data, we need to be able to add, remove, and check the data so
+Back to loop
+Set input = Input
+     If Input = "adding"
+//output person added and add them by name and code
+//Check if that person is in the database.  If so, error out and reset to the beginning. If not, add them, then proceed to the beginning.
+          Output "What's the Employee ID number?"
+          input = Entered ID
+               If array.Employee IDs.includes(Entered ID)
+                    Output "Error, Employee with entered ID already in the System."
+                    Go back to line 14
+               else
+                    Add (Entered ID) to list (Employee IDs) before item number 1
+                    Output "What's their full legal name?"
+                    input = input
+                    Add (Input) to list (Employee names) before item number 1
+                    Add 0 to list Overtime hours before item number 1
+                    Add 0 to list Normal time hours before item number 1
+//Removing them is next up in the possibility.  First, we make sure they exist in the system
+          If input = "removing"
+               Output "Which employee are we terminating from the system?"
+               Entered ID = Input
+//Now we have to see if they are actually in the system
+                    If array. Employee IDs.includes(Entered ID)
+                         Set (List item) to list (Employee IDs) item number (Entered ID)
+                         Delete item number (List item) from list (Employee IDs)
+                         Delete item number (List item) from list (Employee names)
+                         Delete item number (List item) from list (Overtime hours)
+                         Delete item number (List item) from list (Normal time hours)
+//After purging them from the database, it goes back to the start
+                         Go back to line 14
+                    else
+                         Output "ERROR, Employee not found in database.  Please make sure ID is correct and try again."
+                         Go back to line 14
+          else
+//checking for person in database
+               If Array.Employee IDs.includes(Entered ID)
+//Set the list number to the ID list placement so it can output the greeting message
+     	            List item = item number entered ID from list of Employee IDs
+                    Output "Hello: " str (Employee names) item number (List item))
+//Outputting how many hours they have worked
+                    Output "You have worked " + (str (Normal time hours) item number (List item)) + "and " + (Overtime hours) item number (List item))
+                    Request Payrate from calculations
+                    Output "Your pay will be " + (str Payrate) + " after Taxes are applied"
+                    Go back to line 14
+               else
+//If they aren't in the database, then it outputs the error code for it
+                    Output "ERROR.  Employee not found in database."
+                    Go back to line 14
