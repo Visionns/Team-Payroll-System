@@ -1,0 +1,104 @@
+//Hello. I’m Garrett and I worked on the payroll calculations system. It was a bit of a struggle, but I hope I was able to get most of the aspects correct.
+Start
+//First, we’ll need some variables and imports.
+Import employees
+Import employee
+Input federal_tax_rate=0.079
+Input state_tax_rate=0.056
+Input bonus=0
+//We’ll next continue with creating an employee class. This will be used for testing the imports coming in from the employee database module created by my teammates.
+class Employee:
+    def __init__(self, name, hourly_rate):
+        self.name = name
+        self.hourly_rate = hourly_rate
+
+//Next up are the calculations. This section creates a definition of salary calculations. We have IF statements for proper time matching and calculations. It then does an ELSE check for hours over the specified time, that being 40 hours. Due to it being a specific definition, if the hours classified as overtime ever needs to be changed, we can control that with the “if hours_worked <= 40:” statement.
+    # Salary and Overtime inputs and calculations
+    def calculate_salary(self, hours_worked, bonus=0):
+        if hours_worked <= 40:
+            salary = hours_worked * self.hourly_rate
+        else:
+            # Overtime calculations start here
+            regular_pay = 40 * self.hourly_rate
+            overtime_pay = (hours_worked - 40) * (self.hourly_rate * 1.5)
+            salary = regular_pay + overtime_pay
+
+//The “salary += bonus” then calculates anything over and includes it into salary calculations and returns it for recollection later.
+        salary += bonus
+        return salary
+
+//Next on the list is to calculate net salaries. This definition takes the definition of “calculate_salary” from earlier for calculations below. It takes that definition, equates it as a “gross_salary” definition, and then does two tax calculations, one with state tax and one with federal tax as defined in the beginning. Afterwards it then takes the “gross_salary” equated from earlier then subtracts both the “state_tax” and “federal_tax.” Having “gross_salary” calculated is also important so we can output it during the final stages alongside with the “net_salary” calculations for any corrections.
+    # Calculate net salaries  
+    def calculate_net_salary(self, hours_worked, bonus=0, state_tax_rate=0.056, fed_tax_rate=0.079):
+        gross_salary = self.calculate_salary(hours_worked, bonus)
+        state_tax = gross_salary * state_tax_rate
+        federal_tax = gross_salary * fed_tax_rate
+        return gross_salary - state_tax - federal_tax 
+
+//Next on the list is input validations. This section is to make sure that any inputs given MUST match what’s being asked for. This means creating a definition called “get_validated_input” so we can refer back to it later. This definition also has demarcations as what will be acceptable inputs. We also have defined an error message as well designated as “error_msg=”Invalid input.”.” What is happening in this section is it is using WHILE statements and checking if they’re True. If they aren’t, then we give the defined error message for a re-attempt.
+# Inputs go here/validation section
+def get_validated_input(prompt, cast_type=float, condition=lambda x: True, error_msg="Invalid input."):
+    while True:
+//For the value = input(prompt).strip(), it checks for anything marked ‘str’ and makes sure the IF statement has to be true on both markings using an ‘AND’ statement check, using both ‘value’ AND ‘condition(value)’ and returns the proper value if BOTH are true. Otherwise, it will output the earlier defined error message.
+        try:
+            value = input(prompt).strip()
+            if cast_type == str:
+                if value and condition(value):
+                    return value
+                else:
+                    print(error_msg)
+//This else statement is an ‘ELSE’ statement check for the bonus input section. If anything, other than actual ‘float’ inputs are given, it’ll default to ‘0.0’ and return that. Otherwise, an accepted input will add that to calculations instead. Also, the casted type can be ‘float.’ Otherwise, it’ll default to ‘0.0’ as defined.
+            else:
+                if value == "" and cast_type == float: # This is optional bonus input demarcation
+                    return 0.0
+                casted = cast_type(value)
+                if condition(casted):
+                    return casted
+                else:
+                    print(error_msg)
+//Any other inputs outside of what is defined will purely send back the defined error message.
+        except ValueError:
+            print(error_msg)
+
+//Here comes the payroll loop. This section prints the employee information for testing. This will allow us to disconnect anything further from the module to insert into my teammates’ modules. This loop allows for multiple employees to be inputted and outputted as a set list. It utilizes ‘while True:’ statements to properly print out correct information and each print that requires an input will use the earlier defined ‘get_validated_input’ for any errors or discrepancies. Anything that is inputted outside of each inputs defined parameters aren’t accepted and will output error messages as defined in each line utilizing ‘print_error_msg’.
+# This is the payroll loop
+employees = []
+
+while True:
+    print("\nEnter Employee Information")
+    name = get_validated_input("Name: ", str, lambda x: True, "Name cannot be empty.")
+    hourly_rate = get_validated_input("Hourly wage: ", float, lambda x: x > 0, "Hourly wage must be positive.")
+    hours_worked = get_validated_input("Hours worked: ", float, lambda x: x >= 0, "Hours worked cannot be negative.")
+    bonus = get_validated_input("Bonus (press Enter if none): ", float, lambda x: x >= 0, "Bonus cannot be negative.")
+
+//This is where things are lined up in a listing and prepped until the input ‘n’ is given. It will continue the loop by asking for each employee’s information until the user has given the clear to stop. Then it will calculate everything and output it in a list.
+    employee = Employee(name, hourly_rate)
+    gross = employee.calculate_salary(hours_worked, bonus)
+    net = employee.calculate_net_salary(hours_worked, bonus)
+
+    employees.append({
+        "name": name,
+        "hourly_rate": hourly_rate,
+        "hours_worked": hours_worked,
+        "bonus": bonus,
+        "gross_salary": round(gross, 2),
+        "net_salary": round(net, 2)
+    })
+
+    print(f"\n{name}'s gross salary: ${gross:.2f}")
+    print(f"{name}'s net salary after taxes: ${net:.2f}")
+
+    continue_input = input("\nAdd another employee? (y/n): ").strip().lower()
+    if continue_input != 'y':
+        break
+
+//As noted, this will be the outputted payroll summary.
+# End results/Outputs
+print("\nPayroll Summary")
+for e in employees:
+    print(f"\nEmployee: {e['name']}")
+    print(f" Hourly Rate: ${e['hourly_rate']:.2f}")
+    print(f" Hours Worked: {e['hours_worked']}")
+    print(f" Bonus: ${e['bonus']:.2f}")
+    print(f" Gross Salary: ${e['gross_salary']:.2f}")
+    print(f" Net Salary: ${e['net_salary']:.2f}")
